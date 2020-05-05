@@ -1,0 +1,489 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ include "pipeline-operator.fullname" . }}-pipeline-dashboard"
+  {{- if .Values.metrics.prometheusOperatorNamespace }}
+  namespace: {{ .Values.metrics.prometheusOperatorNamespace }}
+  {{- end }}
+  labels:
+    app.kubernetes.io/name: {{ include "pipeline-operator.name" . }}
+    app.kubernetes.io/part-of: algo.run
+    app.kubernetes.io/component: pipeline-operator
+    helm.sh/chart: {{ include "pipeline-operator.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    grafana_dashboard: '1'
+    {{- include "pipeline-operator.labels" . | nindent 4 }}
+data:
+  pipeline-deployments-dashboard.json: |-
+    {
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": "-- Grafana --",
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+          }
+        ]
+      },
+      "editable": true,
+      "gnetId": null,
+      "graphTooltip": 0,
+      "id": 31,
+      "iteration": 1586321178943,
+      "links": [],
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": null,
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "hiddenSeries": false,
+          "id": 3,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum(increase(algorunner_algo_duration_seconds_count{deployment=\"$algorun_deployment\",pipeline=\"$algorun_pipeline\",component=\"$algorun_component\",name=\"$algorun_component_name\",index=\"$algorun_component_index\"}[$__interval])) by (deployment)",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "`{{`deployment`}}`",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Algo Msg Processed Count",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": null,
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "hiddenSeries": false,
+          "id": 6,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum(increase(algorunner_algo_error{deployment=\"$algorun_deployment\",pipeline=\"$algorun_pipeline\",component=\"$algorun_component\",name=\"$algorun_component_name\",index=\"$algorun_component_index\"}[$__interval])) by (name)",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "`{{`name`}}`",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Algo Errors",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": null,
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 9
+          },
+          "hiddenSeries": false,
+          "id": 5,
+          "legend": {
+            "avg": true,
+            "current": true,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (deployment) (rate(algorunner_msg_bytes_input_total{deployment=\"$algorun_deployment\",pipeline=\"$algorun_pipeline\",component=\"$algorun_component\",name=\"$algorun_component_name\",index=\"$algorun_component_index\"}[$__interval]))",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "Msg Input `{{`deployment`}}`",
+              "refId": "B"
+            },
+            {
+              "expr": "sum by (deployment) (rate(algorunner_msg_bytes_output_total{deployment=\"$algorun_deployment\",pipeline=\"$algorun_pipeline\",component=\"$algorun_component\",name=\"$algorun_component_name\",index=\"$algorun_component_index\"}[$__interval]))",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "Msg Output `{{`deployment`}}`",
+              "refId": "A"
+            },
+            {
+              "expr": "sum by (deployment) (rate(algorunner_data_bytes_input_total{deployment=\"$algorun_deployment\",pipeline=\"$algorun_pipeline\",component=\"$algorun_component\",name=\"$algorun_component_name\",index=\"$algorun_component_index\"}[$__interval]))",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "Data Input `{{`deployment`}}`",
+              "refId": "C"
+            },
+            {
+              "expr": "sum by (deployment) (rate(algorunner_data_bytes_output_total{deployment=\"$algorun_deployment\",pipeline=\"$algorun_pipeline\",component=\"$algorun_component\",name=\"$algorun_component_name\",index=\"$algorun_component_index\"}[$__interval]))",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "Data Output `{{`deployment`}}`",
+              "refId": "D"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Algo Data I/O",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "decbytes",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "decbytes",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "refresh": "5s",
+      "schemaVersion": 22,
+      "style": "dark",
+      "tags": [],
+      "templating": {
+        "list": [
+          {
+            "allValue": null,
+            "current": {
+              "selected": false,
+              "text": "All",
+              "value": "$__all"
+            },
+            "datasource": "Prometheus",
+            "definition": "label_values(algorunner_run_duration_seconds_count{job=\"algo-metrics-service\"}, deployment)",
+            "hide": 0,
+            "includeAll": true,
+            "label": "Deployment Name",
+            "multi": false,
+            "name": "algorun_deployment",
+            "options": [],
+            "query": "label_values(algorunner_run_duration_seconds_count{job=\"algo-metrics-service\"}, deployment)",
+            "refresh": 2,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tags": [],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+          },
+          {
+            "allValue": null,
+            "current": {
+              "selected": false,
+              "text": "All",
+              "value": "$__all"
+            },
+            "datasource": "Prometheus",
+            "definition": "label_values(algorunner_run_duration_seconds_count{job=\"algo-metrics-service\"}, pipeline)",
+            "hide": 0,
+            "includeAll": true,
+            "label": "Pipeline Name",
+            "multi": false,
+            "name": "algorun_pipeline",
+            "options": [],
+            "query": "label_values(algorunner_run_duration_seconds_count{job=\"algo-metrics-service\"}, pipeline)",
+            "refresh": 2,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tags": [],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+          },
+          {
+            "allValue": null,
+            "current": {
+              "selected": false,
+              "text": "All",
+              "value": "$__all"
+            },
+            "datasource": "Prometheus",
+            "definition": "label_values(algorunner_run_duration_seconds_count{job=\"algo-metrics-service\"}, component)",
+            "hide": 0,
+            "includeAll": true,
+            "label": "Component",
+            "multi": false,
+            "name": "algorun_component",
+            "options": [],
+            "query": "label_values(algorunner_run_duration_seconds_count{job=\"algo-metrics-service\"}, component)",
+            "refresh": 2,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tags": [],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+          },
+          {
+            "allValue": null,
+            "current": {
+              "selected": false,
+              "text": "All",
+              "value": "$__all"
+            },
+            "datasource": "Prometheus",
+            "definition": "label_values(algorunner_run_duration_seconds_count{job=\"algo-metrics-service\"}, name)",
+            "hide": 0,
+            "includeAll": true,
+            "label": "Name",
+            "multi": false,
+            "name": "algorun_component_name",
+            "options": [],
+            "query": "label_values(algorunner_run_duration_seconds_count{job=\"algo-metrics-service\"}, name)",
+            "refresh": 2,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tags": [],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+          },
+          {
+            "allValue": null,
+            "current": {
+              "text": "1",
+              "value": "1"
+            },
+            "datasource": "Prometheus",
+            "definition": "label_values(algorunner_run_duration_seconds_count{job=\"algo-metrics-service\"}, index)",
+            "hide": 0,
+            "includeAll": true,
+            "label": "Index",
+            "multi": false,
+            "name": "algorun_component_index",
+            "options": [],
+            "query": "label_values(algorunner_run_duration_seconds_count{job=\"algo-metrics-service\"}, index)",
+            "refresh": 2,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tags": [],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+          }
+        ]
+      },
+      "time": {
+        "from": "now-1h",
+        "to": "now"
+      },
+      "timepicker": {
+        "refresh_intervals": [
+          "5s",
+          "10s",
+          "30s",
+          "1m",
+          "5m",
+          "15m",
+          "30m",
+          "1h",
+          "2h",
+          "1d"
+        ]
+      },
+      "timezone": "",
+      "title": "AlgoRun Pipeline Deployments",
+      "uid": "WXJYQErZz",
+      "version": 4
+    }

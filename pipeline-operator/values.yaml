@@ -1,0 +1,223 @@
+# Default values for pipeline-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: algohub/pipeline-operator
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart version.
+  tag: "eb2896135958feb9c2f7b45efd79ad76ea8ccfef"
+
+algoRunnerImage:
+  repository: algohub/algo-runner
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart version.
+  tag: "240153868a5b21207b61270762bffc978615964a"
+
+endpointImage:
+  repository: algohub/deployment-endpoint
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart version.
+  tag: "7f2acda823d48893838d03f2b706684cf84b7d7a"
+
+eventHookImage:
+  repository: algohub/event-hook-runner
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart version.
+  tag: "5ae767f855bf45a102a5327f7685cc89d4a45d8d"
+
+notifications:
+  enabled: false
+  url: 
+
+scope: 
+  type: cluster
+  watchNamespace: ""
+
+kafka:
+  operatorType: strimzi
+  namespace: kafka
+  clusterName: kafka
+  tls:
+    enabled: true
+    caSecretName: kafka-cluster-ca-cert
+    caCertSecretKey: ca.crt
+  auth: 
+    type: tls
+    authSecretName: "{kafkaClusterName}-{deploymentowner}-{deploymentname}"
+    authCertSecretKey: user.crt
+    authKeySecretKey: user.key
+  # auth: 
+  #   type: scram-sha-512
+  #   username: 
+  #   authSecretName: 
+  #   passwordSecretKey: 
+  # auth: 
+  #   type: plain
+  #   username: 
+  #   authSecretName: 
+  #   passwordSecretKey: 
+
+# Additional container environment variables
+env: {}
+  # Manually set the name of the operator
+  # OPERATOR_NAME: "pipeline-operator"
+
+rbac:
+  # Specifies whether RBAC resources should be created
+  create: true
+  podSecurityPolicies: []
+  # Name of the RBAC resources defaults to the name of the release.
+  # Set nameOverride when installing pipeline operator with cluster-wide scope in
+  # different namespaces with the same release name to avoid conflicts.
+  nameOverride:
+
+metrics:
+
+  enabled: true
+
+  prometheusOperatorNamespace: "prometheus-operator"
+
+  # The serviceMonitorNamespace sets the namespace the servicemonitor will be created in.
+  # By default, it is created in the release namespace. If necessary, set the namespace the prometheus operator is watching for service monitors.
+  # serviceMonitorNamespace: ""
+
+  pipelineOperatorServiceMonitor:
+    ## If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry
+    enabled: true
+    ## Specify the namespace in which the serviceMonitor resource will be created
+    # namespace: ""
+    ## Specify the interval at which metrics should be scraped
+    interval: 30s
+    ## Specify the timeout after which the scrape is ended
+    # scrapeTimeout: 30s
+    ## Specify Metric Relabellings to add to the scrape endpoint
+    # relabellings:
+    ## Specify honorLabels parameter to add the scrape endpoint
+    honorLabels: false
+    ## Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work
+    # release: ""
+    ## Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with
+    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
+    additionalLabels: {}
+
+  algoServiceMonitor:
+    ## If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry
+    enabled: true
+    ## Specify the namespace in which the serviceMonitor resource will be created
+    # namespace: ""
+    ## Specify the interval at which metrics should be scraped
+    interval: 30s
+    ## Specify the timeout after which the scrape is ended
+    # scrapeTimeout: 30s
+    ## Specify Metric Relabellings to add to the scrape endpoint
+    # relabellings:
+    ## Specify honorLabels parameter to add the scrape endpoint
+    honorLabels: false
+    ## Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work
+    # release: ""
+    ## Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with
+    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
+    additionalLabels: {}
+  
+  dataConnectorServiceMonitor:
+    ## If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry
+    enabled: true
+    ## Specify the namespace in which the serviceMonitor resource will be created
+    # namespace: ""
+    ## Specify the interval at which metrics should be scraped
+    interval: 30s
+    ## Specify the timeout after which the scrape is ended
+    # scrapeTimeout: 30s
+    ## Specify Metric Relabellings to add to the scrape endpoint
+    # relabellings:
+    ## Specify honorLabels parameter to add the scrape endpoint
+    honorLabels: false
+    ## Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work
+    # release: ""
+    ## Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with
+    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
+    additionalLabels: {}
+
+  endpointServiceMonitor:
+    ## If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry
+    enabled: true
+    ## Specify the namespace in which the serviceMonitor resource will be created
+    # namespace: ""
+    ## Specify the interval at which metrics should be scraped
+    interval: 30s
+    ## Specify the timeout after which the scrape is ended
+    # scrapeTimeout: 30s
+    ## Specify Metric Relabellings to add to the scrape endpoint
+    # relabellings:
+    ## Specify honorLabels parameter to add the scrape endpoint
+    honorLabels: false
+    ## Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work
+    # release: ""
+    ## Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with
+    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
+    additionalLabels: {}
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 80
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

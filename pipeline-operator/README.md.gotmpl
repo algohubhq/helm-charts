@@ -1,0 +1,34 @@
+{{ template "chart.header" . }}
+{{ template "chart.description" . }}
+
+{{ template "chart.versionLine" . }}
+
+{{ template "chart.sourceLinkLine" . }}
+
+## TL;DR
+
+```bash
+$ helm repo add algohub https://charts.algohub.com
+$ helm install my-pipeline-operator algohub/pipeline-operator
+```
+
+## Introduction
+The algo.run pipeline operator is designed to orchestrate the deployment of any Kafka based data pipeline into any kubernetes cluster. 
+A pipeline can be created through a simple yet powerful declarative API implemented as Kubernetes CRDs. 
+This chart bootstraps the pipleine operator deployment using the Helm package manager.
+
+## Requirements
+
+## Installation
+
+#### Install helm
+https://github.com/helm/helm#install
+
+#### Add the algohub helm chart repo
+```bash
+$ helm repo add algohub https://charts.algohub.com
+```
+
+{{ template "chart.requirementsSection" . }}
+
+{{ template "chart.valuesSection" . }}

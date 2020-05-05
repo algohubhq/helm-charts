@@ -1,0 +1,42 @@
+{{- if .Values.metrics.dataConnectorServiceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: "{{ include "pipeline-operator.name" . }}-dataconnector-sm"
+  {{- if .Values.metrics.serviceMonitorNamespace }}
+  namespace: {{ .Values.metrics.serviceMonitorNamespace }}
+  {{- end }}
+  labels:
+    app.kubernetes.io/name: {{ include "pipeline-operator.name" . }}
+    app.kubernetes.io/part-of: algo.run
+    app.kubernetes.io/component: pipeline-operator
+    helm.sh/chart: {{ include "pipeline-operator.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- if .Values.metrics.dataConnectorServiceMonitor.additionalLabels }}
+{{ toYaml .Values.metrics.dataConnectorServiceMonitor.additionalLabels | indent 4 }}
+    {{- end }}
+spec:
+  endpoints:
+  - port: metrics
+    interval: {{ .Values.metrics.dataConnectorServiceMonitor.interval }}
+    {{- if .Values.metrics.dataConnectorServiceMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ .Values.metrics.dataConnectorServiceMonitor.scrapeTimeout }}
+    {{- end }}
+    honorLabels: {{ .Values.metrics.dataConnectorServiceMonitor.honorLabels }}
+    {{- if .Values.metrics.dataConnectorServiceMonitor.relabellings }}
+    metricRelabelings:
+{{ toYaml .Values.metrics.dataConnectorServiceMonitor.relabellings | indent 6 }}
+    {{- end }}
+  {{- if eq .Values.scope.type "namespace" }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  {{- else }}
+  namespaceSelector:
+    any: true
+  {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: algo.run
+      app.kubernetes.io/component: dataconnector
+{{- end }}
