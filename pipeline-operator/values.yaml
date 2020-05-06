@@ -30,11 +30,11 @@ algoRunnerImage:
 endpointImage:
   # endpointImage.repository -- Set the default image and tag that will be used for the pipeline endpoint gateway.
   # The endpointImage may be overridden by a pipeline deployment
-  repository: algohub/deployment-endpoint
+  repository: algohub/pipeline-endpoint
   # endpointImage.pullPolicy -- The pipeline endpoint image pull policy
   pullPolicy: IfNotPresent
   # endpointImage.tag -- The pipeline endpoint image tag
-  tag: "7f2acda823d48893838d03f2b706684cf84b7d7a"
+  tag: "517fcd1c9c2815b537481eeb2389c9fe1489beb0"
 
 eventHookImage:
   # eventHookImage.repository -- Set the default image and tag that will be used for the pipeline hook runner.
