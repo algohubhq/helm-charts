@@ -1,13 +1,16 @@
-# Default values for pipeline-operator.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
+# replicaCount -- (int) Number of pipeline-operator pods to load balance between
 replicaCount: 1
 
+# imagePullSecrets -- Image pull secrets if private images are used
 imagePullSecrets: []
+
+# nameOverride -- Manually set metadata for the Release. Defaults to .Chart.Name
 nameOverride: ""
+
+# fullnameOverride -- Defaults to .Release.Name-.Chart.Name unless .Release.Name contains "algorun-pipeline-operator"
 fullnameOverride: ""
 
+# image -- Set the image and tag for the pipeline operator
 image:
   repository: algohub/pipeline-operator
   pullPolicy: IfNotPresent
@@ -15,44 +18,70 @@ image:
   tag: "eb2896135958feb9c2f7b45efd79ad76ea8ccfef"
 
 algoRunnerImage:
+  # algoRunnerImage.repository -- Set the default image and tag that will be used for the algo-runner sidecar.
+  # The algoRunnerImage may be overridden by a pipeline deployment
   repository: algohub/algo-runner
+  # algoRunnerImage.pullPolicy -- The algo-runner image pull policy
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart version.
+  # algoRunnerImage.tag -- The algo-runner image tag
   tag: "240153868a5b21207b61270762bffc978615964a"
 
+
 endpointImage:
+  # endpointImage.repository -- Set the default image and tag that will be used for the pipeline endpoint gateway.
+  # The endpointImage may be overridden by a pipeline deployment
   repository: algohub/deployment-endpoint
+  # endpointImage.pullPolicy -- The pipeline endpoint image pull policy
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart version.
+  # endpointImage.tag -- The pipeline endpoint image tag
   tag: "7f2acda823d48893838d03f2b706684cf84b7d7a"
 
 eventHookImage:
+  # eventHookImage.repository -- Set the default image and tag that will be used for the pipeline hook runner.
+  # The eventHookImage may be overridden by a pipeline deployment
   repository: algohub/event-hook-runner
+  # eventHookImage.pullPolicy -- The event hook runner image pull policy
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart version.
+  # eventHookImage.tag -- The event hook runner image tag
   tag: "5ae767f855bf45a102a5327f7685cc89d4a45d8d"
 
+# Http webhook notifications can be sent to a url with status changes 
 notifications:
+  # notifications.enabled -- Enable webhook notifications to be sent for pipeline status changes
   enabled: false
+  # notifications.url -- Url to send status event notifications to
   url: 
 
 scope: 
+  # scope.type -- If set to "cluster", the pipeline operator will manage kafka and ambassador resources in any namespace and create Cluster RBAC if rbac.enabled: true 
+  # If set to "namespace" (Not recommended) the ambassador, kafka operator and pipeline operator must be installed in the same namespace.
   type: cluster
+  # scope.watchNamespace -- The namespace to watch for new pipeline deployments. Default "" watches all namespaces.
   watchNamespace: ""
 
 kafka:
+  # kafka.operatorType -- Currently only the strimzi kafka operator is supported
   operatorType: strimzi
+  # kafka.namespace -- The namespace the kafka operator is installed on
   namespace: kafka
+  # kafka.clusterName -- The name of the kafka cluster (as defined for the kafka operator)
   clusterName: kafka
   tls:
+    # kafka.tls.enabled -- Enable communication over TLS to the kafka brokers 
     enabled: true
+    # kafka.tls.caSecretName -- Name of the secret that contains the certificate authority X509 cert
     caSecretName: kafka-cluster-ca-cert
+    # kafka.tls.caCertSecretKey -- The key (file name) within the secret
     caCertSecretKey: ca.crt
   auth: 
-    type: tls
+    # kafka.auth.type -- Enable communication over TLS to the kafka brokers 
+    type: ""
     authSecretName: "{kafkaClusterName}-{deploymentowner}-{deploymentname}"
     authCertSecretKey: user.crt
     authKeySecretKey: user.key
+
+    authSecretName: ""
+    passwordSecretKey: ""
   # auth: 
   #   type: scram-sha-512
   #   username: 
@@ -64,16 +93,17 @@ kafka:
   #   authSecretName: 
   #   passwordSecretKey: 
 
-# Additional container environment variables
+# env -- Additional container environment variables
 env: {}
   # Manually set the name of the operator
   # OPERATOR_NAME: "pipeline-operator"
 
 rbac:
-  # Specifies whether RBAC resources should be created
+  # rbac.create -- Specifies whether RBAC resources should be created
   create: true
+  # rbac.podSecurityPolicies -- podSecurityPolicies to be added
   podSecurityPolicies: []
-  # Name of the RBAC resources defaults to the name of the release.
+  # rbac.nameOverride -- Name of the RBAC resources defaults to the name of the release.
   # Set nameOverride when installing pipeline operator with cluster-wide scope in
   # different namespaces with the same release name to avoid conflicts.
   nameOverride:
@@ -81,7 +111,6 @@ rbac:
 metrics:
 
   enabled: true
-
   prometheusOperatorNamespace: "prometheus-operator"
 
   # The serviceMonitorNamespace sets the namespace the servicemonitor will be created in.
@@ -165,19 +194,22 @@ metrics:
     additionalLabels: {}
 
 serviceAccount:
-  # Specifies whether a service account should be created
+  # serviceAccount.create -- Specifies whether a service account should be created
   create: true
-  # Annotations to add to the service account
+  # serviceAccount.annotations Annotations to add to the service account
   annotations: {}
-  # The name of the service account to use.
+  # serviceAccount.name The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+# podAnnotations -- Additional annotations to add to the pod
 podAnnotations: {}
 
+# podSecurityContext -- Set security context for the pod
 podSecurityContext: {}
   # fsGroup: 2000
 
+# securityContext -- Set security context for the deployment
 securityContext: {}
   # capabilities:
   #   drop:
@@ -186,10 +218,7 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-service:
-  type: ClusterIP
-  port: 80
-
+# resources -- Set the resource requests and limits
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -203,6 +232,7 @@ resources: {}
   #   memory: 128Mi
 
 autoscaling:
+  # autoscaling.enabled -- Enable autoscaling using a HorizontalPodAutoscaler
   enabled: false
   minReplicas: 1
   maxReplicas: 100
@@ -216,8 +246,11 @@ autoscaling:
         name: memory
         targetAverageUtilization: 80
 
+# nodeSelector -- Set the node selector. See https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
 nodeSelector: {}
 
+# tolerations -- Set the tolerations. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 tolerations: []
 
+# affinity -- Set the affinity. See https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
 affinity: {}

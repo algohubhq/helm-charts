@@ -27,6 +27,16 @@ spec:
     metricRelabelings:
 {{ toYaml .Values.metrics.pipelineOperatorServiceMonitor.relabellings | indent 6 }}
     {{- end }}
+  - port: op-metrics
+    interval: {{ .Values.metrics.pipelineOperatorServiceMonitor.interval }}
+    {{- if .Values.metrics.pipelineOperatorServiceMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ .Values.metrics.pipelineOperatorServiceMonitor.scrapeTimeout }}
+    {{- end }}
+    honorLabels: {{ .Values.metrics.pipelineOperatorServiceMonitor.honorLabels }}
+    {{- if .Values.metrics.pipelineOperatorServiceMonitor.relabellings }}
+    metricRelabelings:
+{{ toYaml .Values.metrics.pipelineOperatorServiceMonitor.relabellings | indent 6 }}
+    {{- end }}
   {{- if eq .Values.scope.type "namespace" }}
   namespaceSelector:
     matchNames:

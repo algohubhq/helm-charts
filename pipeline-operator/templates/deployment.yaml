@@ -40,6 +40,13 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
           - pipeline-operator
+          {{- if .Values.metrics.enabled }}
+          ports:
+            - name: metrics
+              containerPort: 8383
+            - name: op-metrics
+              containerPort: 8686
+          {{- end }}
           env:
           - name: OPERATOR_NAME
             value: {{ include "pipeline-operator.name" . }}
