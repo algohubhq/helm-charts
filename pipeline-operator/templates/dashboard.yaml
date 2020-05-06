@@ -1,4 +1,4 @@
----
+{{- if .Values.metrics.createDashboards -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -487,3 +487,4 @@ data:
       "uid": "WXJYQErZz",
       "version": 4
     }
+{{- end -}}

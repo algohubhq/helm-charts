@@ -73,6 +73,7 @@ $ helm repo add algohub https://charts.algohub.com
 | metrics.algoServiceMonitor.relabellings | string | `nil` | Specify Metric Relabellings to add to the scrape endpoint |
 | metrics.algoServiceMonitor.release | string | `nil` | Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work |
 | metrics.algoServiceMonitor.scrapeTimeout | string | `"30s"` | Specify the timeout after which the scrape is ended |
+| metrics.createDashboards | bool | `true` | Install grafana dashboards and data sources. The prometheus operator must be install with the grafana sidecar enabled. |
 | metrics.dataConnectorServiceMonitor.additionalLabels | object | `{}` | Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec |
 | metrics.dataConnectorServiceMonitor.enabled | bool | `true` | If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry |
 | metrics.dataConnectorServiceMonitor.honorLabels | bool | `false` | Specify honorLabels parameter to add the scrape endpoint |

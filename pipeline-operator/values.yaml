@@ -114,11 +114,12 @@ rbac:
   nameOverride:
 
 metrics:
-
   # metrics.enabled -- Enable metrics collection with the prometheus operator
   enabled: true
   # metrics.prometheusOperatorNamespace -- Prometheus operator namespace to create grafana dashboard and data source resources in
   prometheusOperatorNamespace: "prometheus-operator"
+  # metrics.createDashboards -- Install grafana dashboards and data sources. The prometheus operator must be install with the grafana sidecar enabled.
+  createDashboards: true
 
   # metrics.serviceMonitorNamespace -- The serviceMonitorNamespace sets the namespace the servicemonitor will be created in.
   # By default, it is created in the release namespace. If necessary, set the namespace the prometheus operator is watching for service monitors.
