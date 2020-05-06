@@ -36,19 +36,14 @@ $ helm repo add algohub https://charts.algohub.com
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| affinity | object | `{}` | Set the affinity. See https://kubernetes.io/docs/concepts/configuration/assign-pod-node/ |
+| affinity | object | `{}` | Set the affinity. ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/ |
 | algoRunnerImage.pullPolicy | string | `"IfNotPresent"` | The algo-runner image pull policy |
 | algoRunnerImage.repository | string | `"algohub/algo-runner"` | Set the default image and tag that will be used for the algo-runner sidecar. The algoRunnerImage may be overridden by a pipeline deployment |
 | algoRunnerImage.tag | string | `"240153868a5b21207b61270762bffc978615964a"` | The algo-runner image tag |
 | autoscaling.enabled | bool | `false` | Enable autoscaling using a HorizontalPodAutoscaler |
-| autoscaling.maxReplicas | int | `100` |  |
-| autoscaling.metrics[0].resource.name | string | `"cpu"` |  |
-| autoscaling.metrics[0].resource.targetAverageUtilization | int | `80` |  |
-| autoscaling.metrics[0].type | string | `"Resource"` |  |
-| autoscaling.metrics[1].resource.name | string | `"memory"` |  |
-| autoscaling.metrics[1].resource.targetAverageUtilization | int | `80` |  |
-| autoscaling.metrics[1].type | string | `"Resource"` |  |
-| autoscaling.minReplicas | int | `1` |  |
+| autoscaling.maxReplicas | int | `100` | Maximum replicas created by the HorizontalPodAutoscaler |
+| autoscaling.metrics | string | `nil` | Metrics for the HorizontalPodAutoscaler ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#autoscaling-on-multiple-metrics-and-custom-metrics |
+| autoscaling.minReplicas | int | `1` | Minimum replicas created by the HorizontalPodAutoscaler |
 | endpointImage.pullPolicy | string | `"IfNotPresent"` | The pipeline endpoint image pull policy |
 | endpointImage.repository | string | `"algohub/deployment-endpoint"` | Set the default image and tag that will be used for the pipeline endpoint gateway. The endpointImage may be overridden by a pipeline deployment |
 | endpointImage.tag | string | `"7f2acda823d48893838d03f2b706684cf84b7d7a"` | The pipeline endpoint image tag |
@@ -59,10 +54,10 @@ $ helm repo add algohub https://charts.algohub.com
 | fullnameOverride | string | `""` | Defaults to .Release.Name-.Chart.Name unless .Release.Name contains "algorun-pipeline-operator" |
 | image | object | `{"pullPolicy":"IfNotPresent","repository":"algohub/pipeline-operator","tag":"eb2896135958feb9c2f7b45efd79ad76ea8ccfef"}` | Set the image and tag for the pipeline operator |
 | imagePullSecrets | list | `[]` | Image pull secrets if private images are used |
-| kafka.auth.authCertSecretKey | string | `"user.crt"` |  |
-| kafka.auth.authKeySecretKey | string | `"user.key"` |  |
-| kafka.auth.authSecretName | string | `""` |  |
-| kafka.auth.passwordSecretKey | string | `""` |  |
+| kafka.auth.authCertSecretKey | string | `"user.crt"` | The key (file name) for the cert within the secret |
+| kafka.auth.authKeySecretKey | string | `"user.key"` | The key (file name) for the private key within the secret |
+| kafka.auth.authSecretName | string | `"{kafkaClusterName}-{deploymentowner}-{deploymentname}"` | If auth type "tls" then the name of the secret that contains the client X509 cert The name can use a template as certs can be generated dynamically by the kafka operator If auth type "scram-sha-512" or "plain" then the name of the secret that contains the password |
+| kafka.auth.passwordSecretKey | string | `nil` | The key (file name) for the password within the secret |
 | kafka.auth.type | string | `""` | Enable communication over TLS to the kafka brokers  |
 | kafka.clusterName | string | `"kafka"` | The name of the kafka cluster (as defined for the kafka operator) |
 | kafka.namespace | string | `"kafka"` | The namespace the kafka operator is installed on |
@@ -70,26 +65,43 @@ $ helm repo add algohub https://charts.algohub.com
 | kafka.tls.caCertSecretKey | string | `"ca.crt"` | The key (file name) within the secret |
 | kafka.tls.caSecretName | string | `"kafka-cluster-ca-cert"` | Name of the secret that contains the certificate authority X509 cert |
 | kafka.tls.enabled | bool | `true` | Enable communication over TLS to the kafka brokers  |
-| metrics.algoServiceMonitor.additionalLabels | object | `{}` |  |
-| metrics.algoServiceMonitor.enabled | bool | `true` |  |
-| metrics.algoServiceMonitor.honorLabels | bool | `false` |  |
-| metrics.algoServiceMonitor.interval | string | `"30s"` |  |
-| metrics.dataConnectorServiceMonitor.additionalLabels | object | `{}` |  |
-| metrics.dataConnectorServiceMonitor.enabled | bool | `true` |  |
-| metrics.dataConnectorServiceMonitor.honorLabels | bool | `false` |  |
-| metrics.dataConnectorServiceMonitor.interval | string | `"30s"` |  |
-| metrics.enabled | bool | `true` |  |
-| metrics.endpointServiceMonitor.additionalLabels | object | `{}` |  |
-| metrics.endpointServiceMonitor.enabled | bool | `true` |  |
-| metrics.endpointServiceMonitor.honorLabels | bool | `false` |  |
-| metrics.endpointServiceMonitor.interval | string | `"30s"` |  |
-| metrics.pipelineOperatorServiceMonitor.additionalLabels | object | `{}` |  |
-| metrics.pipelineOperatorServiceMonitor.enabled | bool | `true` |  |
-| metrics.pipelineOperatorServiceMonitor.honorLabels | bool | `false` |  |
-| metrics.pipelineOperatorServiceMonitor.interval | string | `"30s"` |  |
-| metrics.prometheusOperatorNamespace | string | `"prometheus-operator"` |  |
+| metrics.algoServiceMonitor.additionalLabels | object | `{}` | Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec |
+| metrics.algoServiceMonitor.enabled | bool | `true` | If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry |
+| metrics.algoServiceMonitor.honorLabels | bool | `false` | Specify honorLabels parameter to add the scrape endpoint |
+| metrics.algoServiceMonitor.interval | string | `"30s"` | The interval at which metrics should be scraped |
+| metrics.algoServiceMonitor.namespace | string | `nil` | Specify the namespace in which the serviceMonitor resource will be created |
+| metrics.algoServiceMonitor.relabellings | string | `nil` | Specify Metric Relabellings to add to the scrape endpoint |
+| metrics.algoServiceMonitor.release | string | `nil` | Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work |
+| metrics.algoServiceMonitor.scrapeTimeout | string | `"30s"` | Specify the timeout after which the scrape is ended |
+| metrics.dataConnectorServiceMonitor.additionalLabels | object | `{}` | Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec |
+| metrics.dataConnectorServiceMonitor.enabled | bool | `true` | If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry |
+| metrics.dataConnectorServiceMonitor.honorLabels | bool | `false` | Specify honorLabels parameter to add the scrape endpoint |
+| metrics.dataConnectorServiceMonitor.interval | string | `"30s"` | The interval at which metrics should be scraped |
+| metrics.dataConnectorServiceMonitor.namespace | string | `nil` | Specify the namespace in which the serviceMonitor resource will be created |
+| metrics.dataConnectorServiceMonitor.relabellings | string | `nil` | Specify Metric Relabellings to add to the scrape endpoint |
+| metrics.dataConnectorServiceMonitor.release | string | `nil` | Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work |
+| metrics.dataConnectorServiceMonitor.scrapeTimeout | string | `"30s"` | Specify the timeout after which the scrape is ended |
+| metrics.enabled | bool | `true` | Enable metrics collection with the prometheus operator |
+| metrics.endpointServiceMonitor.additionalLabels | object | `{}` | Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec |
+| metrics.endpointServiceMonitor.enabled | bool | `true` | If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry |
+| metrics.endpointServiceMonitor.honorLabels | bool | `false` | Specify honorLabels parameter to add the scrape endpoint |
+| metrics.endpointServiceMonitor.interval | string | `"30s"` | The interval at which metrics should be scraped |
+| metrics.endpointServiceMonitor.namespace | string | `nil` | Specify the namespace in which the serviceMonitor resource will be created |
+| metrics.endpointServiceMonitor.relabellings | string | `nil` | Specify Metric Relabellings to add to the scrape endpoint |
+| metrics.endpointServiceMonitor.release | string | `nil` | Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work |
+| metrics.endpointServiceMonitor.scrapeTimeout | string | `"30s"` | Specify the timeout after which the scrape is ended |
+| metrics.pipelineOperatorServiceMonitor.additionalLabels | object | `{}` | Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec |
+| metrics.pipelineOperatorServiceMonitor.enabled | bool | `true` | If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry |
+| metrics.pipelineOperatorServiceMonitor.honorLabels | bool | `false` | Specify honorLabels parameter to add the scrape endpoint |
+| metrics.pipelineOperatorServiceMonitor.interval | string | `"30s"` | The interval at which metrics should be scraped |
+| metrics.pipelineOperatorServiceMonitor.namespace | string | `nil` | Specify the namespace in which the serviceMonitor resource will be created |
+| metrics.pipelineOperatorServiceMonitor.relabellings | string | `nil` | Specify Metric Relabellings to add to the scrape endpoint |
+| metrics.pipelineOperatorServiceMonitor.release | string | `nil` | Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work |
+| metrics.pipelineOperatorServiceMonitor.scrapeTimeout | string | `"30s"` | Specify the timeout after which the scrape is ended |
+| metrics.prometheusOperatorNamespace | string | `"prometheus-operator"` | Prometheus operator namespace to create grafana dashboard and data source resources in |
+| metrics.serviceMonitorNamespace | string | `nil` | The serviceMonitorNamespace sets the namespace the servicemonitor will be created in. By default, it is created in the release namespace. If necessary, set the namespace the prometheus operator is watching for service monitors. |
 | nameOverride | string | `""` | Manually set metadata for the Release. Defaults to .Chart.Name |
-| nodeSelector | object | `{}` | Set the node selector. See https://kubernetes.io/docs/concepts/configuration/assign-pod-node/ |
+| nodeSelector | object | `{}` | Set the node selector.  ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/ |
 | notifications.enabled | bool | `false` | Enable webhook notifications to be sent for pipeline status changes |
 | notifications.url | string | `nil` | Url to send status event notifications to |
 | podAnnotations | object | `{}` | Additional annotations to add to the pod |
@@ -102,7 +114,7 @@ $ helm repo add algohub https://charts.algohub.com
 | scope.type | string | `"cluster"` | If set to "cluster", the pipeline operator will manage kafka and ambassador resources in any namespace and create Cluster RBAC if rbac.enabled: true  If set to "namespace" (Not recommended) the ambassador, kafka operator and pipeline operator must be installed in the same namespace. |
 | scope.watchNamespace | string | `""` | The namespace to watch for new pipeline deployments. Default "" watches all namespaces. |
 | securityContext | object | `{}` | Set security context for the deployment |
-| serviceAccount.annotations | object | `{}` |  |
+| serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
-| serviceAccount.name | string | `""` |  |
-| tolerations | list | `[]` | Set the tolerations. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/ |
+| serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
+| tolerations | list | `[]` | Set the tolerations.  ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/ |

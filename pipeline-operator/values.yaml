@@ -76,12 +76,17 @@ kafka:
   auth: 
     # kafka.auth.type -- Enable communication over TLS to the kafka brokers 
     type: ""
+    # kafka.auth.authSecretName -- If auth type "tls" then the name of the secret that contains the client X509 cert
+    # The name can use a template as certs can be generated dynamically by the kafka operator
+    # If auth type "scram-sha-512" or "plain" then the name of the secret that contains the password
     authSecretName: "{kafkaClusterName}-{deploymentowner}-{deploymentname}"
+    # kafka.auth.authCertSecretKey -- The key (file name) for the cert within the secret
     authCertSecretKey: user.crt
+    # kafka.auth.authKeySecretKey -- The key (file name) for the private key within the secret
     authKeySecretKey: user.key
 
-    authSecretName: ""
-    passwordSecretKey: ""
+    # kafka.auth.passwordSecretKey -- The key (file name) for the password within the secret
+    passwordSecretKey: 
   # auth: 
   #   type: scram-sha-512
   #   username: 
@@ -110,95 +115,97 @@ rbac:
 
 metrics:
 
+  # metrics.enabled -- Enable metrics collection with the prometheus operator
   enabled: true
+  # metrics.prometheusOperatorNamespace -- Prometheus operator namespace to create grafana dashboard and data source resources in
   prometheusOperatorNamespace: "prometheus-operator"
 
-  # The serviceMonitorNamespace sets the namespace the servicemonitor will be created in.
+  # metrics.serviceMonitorNamespace -- The serviceMonitorNamespace sets the namespace the servicemonitor will be created in.
   # By default, it is created in the release namespace. If necessary, set the namespace the prometheus operator is watching for service monitors.
-  # serviceMonitorNamespace: ""
+  serviceMonitorNamespace: 
 
   pipelineOperatorServiceMonitor:
-    ## If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry
+    # metrics.pipelineOperatorServiceMonitor.enabled -- If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry
     enabled: true
-    ## Specify the namespace in which the serviceMonitor resource will be created
-    # namespace: ""
-    ## Specify the interval at which metrics should be scraped
+    # metrics.pipelineOperatorServiceMonitor.namespace -- Specify the namespace in which the serviceMonitor resource will be created
+    namespace:
+    # metrics.pipelineOperatorServiceMonitor.interval -- The interval at which metrics should be scraped
     interval: 30s
-    ## Specify the timeout after which the scrape is ended
-    # scrapeTimeout: 30s
-    ## Specify Metric Relabellings to add to the scrape endpoint
-    # relabellings:
-    ## Specify honorLabels parameter to add the scrape endpoint
+    # metrics.pipelineOperatorServiceMonitor.scrapeTimeout -- Specify the timeout after which the scrape is ended
+    scrapeTimeout: 30s
+    # metrics.pipelineOperatorServiceMonitor.relabellings -- Specify Metric Relabellings to add to the scrape endpoint
+    relabellings:
+    # metrics.pipelineOperatorServiceMonitor.honorLabels -- Specify honorLabels parameter to add the scrape endpoint
     honorLabels: false
-    ## Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work
-    # release: ""
-    ## Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with
-    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
+    # metrics.pipelineOperatorServiceMonitor.release -- Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work
+    release:
+    # metrics.pipelineOperatorServiceMonitor.additionalLabels -- Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with
+    # ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
     additionalLabels: {}
 
   algoServiceMonitor:
-    ## If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry
+    # metrics.algoServiceMonitor.enabled -- If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry
     enabled: true
-    ## Specify the namespace in which the serviceMonitor resource will be created
-    # namespace: ""
-    ## Specify the interval at which metrics should be scraped
+    # metrics.algoServiceMonitor.namespace -- Specify the namespace in which the serviceMonitor resource will be created
+    namespace:
+    # metrics.algoServiceMonitor.interval -- The interval at which metrics should be scraped
     interval: 30s
-    ## Specify the timeout after which the scrape is ended
-    # scrapeTimeout: 30s
-    ## Specify Metric Relabellings to add to the scrape endpoint
-    # relabellings:
-    ## Specify honorLabels parameter to add the scrape endpoint
+    # metrics.algoServiceMonitor.scrapeTimeout -- Specify the timeout after which the scrape is ended
+    scrapeTimeout: 30s
+    # metrics.algoServiceMonitor.relabellings -- Specify Metric Relabellings to add to the scrape endpoint
+    relabellings:
+    # metrics.algoServiceMonitor.honorLabels -- Specify honorLabels parameter to add the scrape endpoint
     honorLabels: false
-    ## Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work
-    # release: ""
-    ## Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with
-    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
+    # metrics.algoServiceMonitor.release -- Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work
+    release:
+    # metrics.algoServiceMonitor.additionalLabels -- Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with
+    # ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
     additionalLabels: {}
   
   dataConnectorServiceMonitor:
-    ## If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry
+    # metrics.dataConnectorServiceMonitor.enabled -- If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry
     enabled: true
-    ## Specify the namespace in which the serviceMonitor resource will be created
-    # namespace: ""
-    ## Specify the interval at which metrics should be scraped
+    # metrics.dataConnectorServiceMonitor.namespace -- Specify the namespace in which the serviceMonitor resource will be created
+    namespace:
+    # metrics.dataConnectorServiceMonitor.interval -- The interval at which metrics should be scraped
     interval: 30s
-    ## Specify the timeout after which the scrape is ended
-    # scrapeTimeout: 30s
-    ## Specify Metric Relabellings to add to the scrape endpoint
-    # relabellings:
-    ## Specify honorLabels parameter to add the scrape endpoint
+    # metrics.dataConnectorServiceMonitor.scrapeTimeout -- Specify the timeout after which the scrape is ended
+    scrapeTimeout: 30s
+    # metrics.dataConnectorServiceMonitor.relabellings -- Specify Metric Relabellings to add to the scrape endpoint
+    relabellings:
+    # metrics.dataConnectorServiceMonitor.honorLabels -- Specify honorLabels parameter to add the scrape endpoint
     honorLabels: false
-    ## Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work
-    # release: ""
-    ## Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with
-    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
+    # metrics.dataConnectorServiceMonitor.release -- Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work
+    release:
+    # metrics.dataConnectorServiceMonitor.additionalLabels -- Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with
+    # ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
     additionalLabels: {}
 
   endpointServiceMonitor:
-    ## If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry
+    # metrics.endpointServiceMonitor.enabled -- If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry
     enabled: true
-    ## Specify the namespace in which the serviceMonitor resource will be created
-    # namespace: ""
-    ## Specify the interval at which metrics should be scraped
+    # metrics.endpointServiceMonitor.namespace -- Specify the namespace in which the serviceMonitor resource will be created
+    namespace:
+    # metrics.endpointServiceMonitor.interval -- The interval at which metrics should be scraped
     interval: 30s
-    ## Specify the timeout after which the scrape is ended
-    # scrapeTimeout: 30s
-    ## Specify Metric Relabellings to add to the scrape endpoint
-    # relabellings:
-    ## Specify honorLabels parameter to add the scrape endpoint
+    # metrics.endpointServiceMonitor.scrapeTimeout -- Specify the timeout after which the scrape is ended
+    scrapeTimeout: 30s
+    # metrics.endpointServiceMonitor.relabellings -- Specify Metric Relabellings to add to the scrape endpoint
+    relabellings:
+    # metrics.endpointServiceMonitor.honorLabels -- Specify honorLabels parameter to add the scrape endpoint
     honorLabels: false
-    ## Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work
-    # release: ""
-    ## Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with
-    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
+    # metrics.endpointServiceMonitor.release -- Specify the release for ServiceMonitor. Sometimes it should be custom for prometheus operator to work
+    release:
+    # metrics.endpointServiceMonitor.additionalLabels -- Used to pass Labels that are used by the Prometheus installed in your cluster to select Service Monitors to work with
+    # ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
     additionalLabels: {}
 
 serviceAccount:
   # serviceAccount.create -- Specifies whether a service account should be created
   create: true
-  # serviceAccount.annotations Annotations to add to the service account
+  # serviceAccount.annotations -- Annotations to add to the service account
   annotations: {}
-  # serviceAccount.name The name of the service account to use.
+  # serviceAccount.name -- The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
@@ -234,23 +241,30 @@ resources: {}
 autoscaling:
   # autoscaling.enabled -- Enable autoscaling using a HorizontalPodAutoscaler
   enabled: false
+  # autoscaling.minReplicas -- Minimum replicas created by the HorizontalPodAutoscaler
   minReplicas: 1
+  # autoscaling.maxReplicas -- Maximum replicas created by the HorizontalPodAutoscaler
   maxReplicas: 100
+  # autoscaling.metrics -- Metrics for the HorizontalPodAutoscaler
+  # ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#autoscaling-on-multiple-metrics-and-custom-metrics
   metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        targetAverageUtilization: 80
-    - type: Resource
-      resource:
-        name: memory
-        targetAverageUtilization: 80
+  # - type: Resource
+  #   resource:
+  #     name: cpu
+  #     targetAverageUtilization: 80
+  # - type: Resource
+  #   resource:
+  #     name: memory
+  #     targetAverageUtilization: 80
 
-# nodeSelector -- Set the node selector. See https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+# nodeSelector -- Set the node selector. 
+# ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
 nodeSelector: {}
 
-# tolerations -- Set the tolerations. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+# tolerations -- Set the tolerations. 
+# ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 tolerations: []
 
-# affinity -- Set the affinity. See https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+# affinity -- Set the affinity.
+# ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
 affinity: {}
