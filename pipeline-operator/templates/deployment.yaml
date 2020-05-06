@@ -106,6 +106,16 @@ spec:
             - name: KAFKA_AUTH_PASSWORD_SECRET_KEY
               value: {{ .Values.kafka.auth.passwordSecretKey | quote }}
             {{- end }}
+            {{- if .Values.storage.enabled }}
+            - name: STORAGE_SECRET_NAME
+              value: {{ .Values.storage.storageSecret | quote }}
+            - name: STORAGE_SECRET_KEY
+              value: {{ .Values.storage.storageSecretKey | quote }}
+            - name: STORAGE_REGION
+              value: {{ .Values.storage.region | quote }}
+            - name: STORAGE_BUCKET_NAME
+              value: {{ .Values.storage.bucketName | quote }}
+            {{- end }}
             {{- if .Values.env }}
             {{- range $key,$value := .Values.env }}
             - name: {{ $key | upper | quote}}

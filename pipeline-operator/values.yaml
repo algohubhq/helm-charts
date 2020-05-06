@@ -59,6 +59,24 @@ scope:
   # scope.watchNamespace -- The namespace to watch for new pipeline deployments. Default "" watches all namespaces.
   watchNamespace: ""
 
+storage:
+  # storage.enabled -- Enable storing algo output data to S3 compatible buckets
+  enabled: true
+  # storage.storageSecret -- The storage connection string secret. This secret must contain a connection string in the format:
+  # https://username:password@s3host:port
+  # The secret name can use a template to enable each deployment to be configured for a different S3 connection.
+  # Ex. "storage-{deploymentowner}-{deploymentname}"
+  storageSecret: "storage-connection"
+  # storage.storageSecretKey -- The key (file name) for the connection string within the secret
+  storageSecretKey: "connection-string"
+  # storage.region -- The region for storage buckets. Default for minio is "us-east-1"
+  # Amazon regions ref: https://docs.aws.amazon.com/general/latest/gr/rande.html
+  # Google locations ref: https://cloud.google.com/storage/docs/locations
+  region: "us-east-1"
+  # storage.bucketName -- The S3 bucket name.
+  # The bucket name can use a template to enable each deployment to be configured to save data to different buckets.
+  bucketName: "{deploymentowner}-{deploymentname}"
+
 kafka:
   # kafka.operatorType -- Currently only the strimzi kafka operator is supported
   operatorType: strimzi
