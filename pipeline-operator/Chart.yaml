@@ -1,6 +1,6 @@
 apiVersion: v2
 name: algorun-pipeline-operator
-description: The algo.run pipeline operator orchestrates data processing, machine learning deployment and business automation pipelines.
+description: Algo.Run is a data pipeline orchestration system designed for business automation workflows, machine learning model deployments and realtime data stream processing.
 
 # A chart can be either an 'application' or a 'library' chart.
 #

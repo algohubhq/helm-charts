@@ -1,6 +1,6 @@
-algorun-pipeline-operator
-=========================
-The algo.run pipeline operator orchestrates data processing, machine learning deployment and business automation pipelines.
+# Algo.Run Pipeline Operator
+
+Algo.Run is a data pipeline orchestration system designed for business automation workflows, machine learning model deployments and realtime data stream processing.
 
 Current chart version is `0.1.1`
 
@@ -10,15 +10,50 @@ Source code can be found [here](https://github.com/algohubhq/pipeline-operator)
 
 ```bash
 $ helm repo add algohub https://charts.algohub.com
-$ helm install my-pipeline-operator algohub/pipeline-operator
+$ kubectl create namespace algorun
+$ helm install my-pipeline-operator algohub/pipeline-operator --namespace algorun
 ```
 
 ## Introduction
-The algo.run pipeline operator is designed to orchestrate the deployment of any Kafka based data pipeline into any kubernetes cluster. 
+The pipeline operator facilitates versioned, portable and easily deployable data pipelines on any Kubernetes cluster. Processing nodes (algos) can be created with any containerized data processing tools and languages, which enables easy integration with existing codebase.
 A pipeline can be created through a simple yet powerful declarative API implemented as Kubernetes CRDs. 
-This chart bootstraps the pipleine operator deployment using the Helm package manager.
+This chart bootstraps the pipeline operator deployment using the Helm package manager.
+
+Check out the [documentation](https://algohub.com/lc/docs) for more info.
+
+## Features
+* **Declarative API** - Create reusable pipelines using purely yaml definitions
+* **Processing Nodes** - Use any HTTP, gRPC microservice or even executables as processing algos
+* **Data Connectors** - Provision Kafka Connect data connectors
+* **Endpoint Management** - Deploys HTTP and gRPC endpoints to push data into the pipeline from external systems
+* **Event Hooks** - Subscribe to pipeline events with webhooks to receive output data
+* **Security** - Automatic provisioning of TLS for Kafka and Endpoints. mTLS, sasl scram, plain Kafka authentication.
+* **Retry Strategies** - Built-in Kafka retry and dead-letter-queue strategies. 
 
 ## Requirements
+
+The data plane for algo.run pipelines is based on Kafka and thus a Kafka cluster is required. Currently, in order to automatically provision Kafka Connect data connectors, Kafka Topics, mTLS and encryption, the [Strimzi Kafka Operator](https://strimzi.io/) must be installed and configured in the Kubernetes cluster. 
+To install the strimzi kafka operator:
+- [New Kafka cluster](https://strimzi.io/docs/quickstart/latest/#proc-install-product-str)
+
+For a development Kafka cluster ready for algo.run:
+```bash
+$ helm repo add strimzi http://strimzi.io/charts/
+$ kubectl create namespace kafka
+$ helm install kafka-operator strimzi/strimzi-kafka-operator --set watchNamespaces="{algorun}" --namespace kafka
+```
+
+The pipeline operator also utilizes [Ambassador](https://www.getambassador.io/) to create dynamic ingress mappings into pipeline deployment endpoints.
+
+For a development Ambassador deployment ready for algo.run:
+```bash
+$ helm repo add datawire https://getambassador.io
+$ kubectl create namespace ambassador
+$ helm install ambassador datawire/ambassador --set enableAES="false" --namespace ambassador
+```
+
+Storing data in S3 compatible storage is also supported (not required), if embedding the output data in the kafka stream is not desired.
+We recommend [Minio](https://min.io/) for storage within the kubernetes cluster, otherwise any external S3 bucket can be used.
 
 ## Installation
 
@@ -29,6 +64,19 @@ https://github.com/helm/helm#install
 ```bash
 $ helm repo add algohub https://charts.algohub.com
 ```
+
+#### Creating a separate namespace for algo.run resources is recommended
+```bash
+$ kubectl create namespace algorun
+```
+
+#### Install the pipeline operator into the namespace
+```bash
+$ helm install algorun-pipeline-operator algohub/pipeline-operator --namespace algorun
+```
+
+This deploys the Algo.Run Pipeline Operator on the Kubernetes cluster with the default configuration.
+The [Chart Values](#Chart Values) section below lists the parameters that can be configured during installation.
 
 
 
