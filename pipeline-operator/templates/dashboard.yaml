@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/name: {{ include "pipeline-operator.name" . }}
     app.kubernetes.io/part-of: algo.run
     app.kubernetes.io/component: pipeline-operator
-    helm.sh/chart: {{ include "pipeline-operator.chart" . }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     app.kubernetes.io/instance: {{ .Release.Name }}
     grafana_dashboard: '1'
     {{- include "pipeline-operator.labels" . | nindent 4 }}

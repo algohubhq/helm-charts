@@ -11,7 +11,7 @@ metadata:
   labels:
     app.kubernetes.io/name: {{ include "pipeline-operator.name" . }}
     app.kubernetes.io/part-of: algo.run
-    helm.sh/chart: {{ include "pipeline-operator.chart" . }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     app.kubernetes.io/instance: {{ .Release.Name }}
 rules:
   - apiGroups:
@@ -20,6 +20,7 @@ rules:
     - namespaces
     verbs:
     - get
+    - list
   - apiGroups:
     - ""
     resources:
@@ -72,6 +73,7 @@ rules:
     - servicemonitors
     verbs:
     - get
+    - list
     - create
   - apiGroups:
     - kafka.strimzi.io
@@ -80,6 +82,18 @@ rules:
     - kafkausers
     - kafkaconnects
     - kafkaconnectors
+    verbs:
+    - get
+    - list
+    - watch
+    - create
+    - patch
+    - update
+    - delete
+  - apiGroups:
+    - getambassador.io
+    resources:
+    - mappings
     verbs:
     - get
     - list
@@ -109,7 +123,7 @@ metadata:
   labels:
     app.kubernetes.io/name: {{ include "pipeline-operator.name" . }}
     app.kubernetes.io/part-of: algo.run
-    helm.sh/chart: {{ include "pipeline-operator.chart" . }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     app.kubernetes.io/instance: {{ .Release.Name }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io

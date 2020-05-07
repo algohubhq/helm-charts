@@ -3,21 +3,21 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: "{{ include "pipeline-operator.name" . }}-sm"
-  {{- if .Values.metrics.serviceMonitorNamespace }}
+  {{- if ne .Values.metrics.serviceMonitorNamespace "" }}
   namespace: {{ .Values.metrics.serviceMonitorNamespace }}
   {{- end }}
   labels:
     app.kubernetes.io/name: {{ include "pipeline-operator.name" . }}
     app.kubernetes.io/part-of: algo.run
     app.kubernetes.io/component: pipeline-operator
-    helm.sh/chart: {{ include "pipeline-operator.chart" . }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     app.kubernetes.io/instance: {{ .Release.Name }}
     {{- if .Values.metrics.pipelineOperatorServiceMonitor.additionalLabels }}
 {{ toYaml .Values.metrics.pipelineOperatorServiceMonitor.additionalLabels | indent 4 }}
     {{- end }}
 spec:
   endpoints:
-  - port: metrics
+  - port: http-metrics
     interval: {{ .Values.metrics.pipelineOperatorServiceMonitor.interval }}
     {{- if .Values.metrics.pipelineOperatorServiceMonitor.scrapeTimeout }}
     scrapeTimeout: {{ .Values.metrics.pipelineOperatorServiceMonitor.scrapeTimeout }}
@@ -27,7 +27,7 @@ spec:
     metricRelabelings:
 {{ toYaml .Values.metrics.pipelineOperatorServiceMonitor.relabellings | indent 6 }}
     {{- end }}
-  - port: op-metrics
+  - port: cr-metrics
     interval: {{ .Values.metrics.pipelineOperatorServiceMonitor.interval }}
     {{- if .Values.metrics.pipelineOperatorServiceMonitor.scrapeTimeout }}
     scrapeTimeout: {{ .Values.metrics.pipelineOperatorServiceMonitor.scrapeTimeout }}
@@ -47,6 +47,5 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      app: {{ template "pipeline-operator.name" . }}
-      release: "{{ .Release.Name }}"
+      name: {{ template "pipeline-operator.name" . }}
 {{- end }}

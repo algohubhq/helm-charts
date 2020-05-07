@@ -15,7 +15,7 @@ image:
   repository: algohub/pipeline-operator
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart version.
-  tag: "eb2896135958feb9c2f7b45efd79ad76ea8ccfef"
+  tag: "917f8914fa82a4e3aae02449ea8163344414ed3c"
 
 algoRunnerImage:
   # algoRunnerImage.repository -- Set the default image and tag that will be used for the algo-runner sidecar.
@@ -141,7 +141,7 @@ metrics:
 
   # metrics.serviceMonitorNamespace -- The serviceMonitorNamespace sets the namespace the servicemonitor will be created in.
   # By default, it is created in the release namespace. If necessary, set the namespace the prometheus operator is watching for service monitors.
-  serviceMonitorNamespace: 
+  serviceMonitorNamespace: ""
 
   pipelineOperatorServiceMonitor:
     # metrics.pipelineOperatorServiceMonitor.enabled -- If the prometheus operator is installed in your cluster, set to true to create a Service Monitor Entry
