@@ -15,7 +15,12 @@ $ helm install my-pipeline-operator algohub/pipeline-operator --namespace algoru
 ```
 
 ## Introduction
-The pipeline operator facilitates versioned, portable and easily deployable data pipelines on any Kubernetes cluster. Processing nodes (algos) can be created with any containerized data processing tools and languages, which enables easy integration with existing codebase.
+The Algo.Run Pipeline Operator facilitates versioned, portable and easily deployable automation pipelines on any Kubernetes cluster. Processing nodes (algos) can be created with any script, executable or server that can be containerized. 
+This provides some powerful capabilities:
+
+* **Integration** - Easy integration with existing code. No need to throw away existing work or rewrite for yet another framework.
+* **Language Agnostic** - Golang, Python, C++, R, Java, C#, bash, Rust... you name it and it can be a be imported as a processing node.
+
 A pipeline deployment can be created through a simple yet powerful declarative API implemented as Kubernetes CRDs. 
 This chart bootstraps the pipeline operator deployment using the Helm package manager.
 
@@ -44,7 +49,7 @@ $ kubectl create namespace kafka
 $ helm install kafka-operator strimzi/strimzi-kafka-operator --set watchNamespaces="{algorun}" --namespace kafka
 ```
 
-The pipeline operator also utilizes [Ambassador](https://www.getambassador.io/) to create dynamic ingress mappings into pipeline deployment endpoints.
+The Algo.Run pipeline operator also utilizes [Ambassador](https://www.getambassador.io/) to create dynamic ingress mappings into pipeline deployment endpoints.
 
 For a development Ambassador deployment ready for algo.run:
 ```bash
