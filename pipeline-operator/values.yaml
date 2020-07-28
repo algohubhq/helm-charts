@@ -15,7 +15,7 @@ image:
   repository: algohub/pipeline-operator
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart version.
-  tag: "917f8914fa82a4e3aae02449ea8163344414ed3c"
+  tag: "6a67449e29e0e4e5d38dd3ca5ac57d0fb0ba0242"
 
 algoRunnerImage:
   # algoRunnerImage.repository -- Set the default image and tag that will be used for the algo-runner sidecar.
@@ -97,7 +97,7 @@ kafka:
     # kafka.auth.authSecretName -- If auth type "tls" then the name of the secret that contains the client X509 cert
     # The name can use a template as certs can be generated dynamically by the kafka operator
     # If auth type "scram-sha-512" or "plain" then the name of the secret that contains the password
-    authSecretName: "{kafkaClusterName}-{deploymentowner}-{deploymentname}"
+    authSecretName: "{kafkaclustername}-{deploymentowner}-{deploymentname}"
     # kafka.auth.authCertSecretKey -- The key (file name) for the cert within the secret
     authCertSecretKey: user.crt
     # kafka.auth.authKeySecretKey -- The key (file name) for the private key within the secret
